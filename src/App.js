@@ -1,8 +1,9 @@
 import "./App.css";
-import { useState } from "react";
+import { useReducer, useState } from "react";
 import styled from "styled-components";
 import { device } from "./constants/deviceSizes";
 import { v4 as uuid } from "uuid";
+import { filterReducer } from "./reducers/filterReducer";
 
 const StyledApp = styled.div`
   display: flex;
@@ -42,6 +43,7 @@ const initialTodos = [
 const App = () => {
   const [task, setTask] = useState("");
   const [todos, setTodos] = useState(initialTodos);
+  const [filter, dispatchFilter] = useReducer(filterReducer, "ALL");
 
   const handleChangeInput = (event) => {
     setTask(event.target.value);
@@ -66,11 +68,32 @@ const App = () => {
     event.preventDefault();
   };
 
-  console.log("task?", task);
+  const handleShowAll = () => {
+    dispatchFilter({ type: "SHOW_ALL" });
+  };
+
+  const handleShowComplete = () => {
+    dispatchFilter({ type: "SHOW_COMPLETE" });
+  };
+
+  const handleShowIncomplete = () => {
+    dispatchFilter({ type: "SHOW_INCOMPLETE" });
+  };
 
   return (
     <StyledApp className="App">
       <h1>To Do List</h1>
+      <div>
+        <button type={"button"} onClick={handleShowAll}>
+          Show All
+        </button>
+        <button type={"button"} onClick={handleShowComplete}>
+          Show Complete
+        </button>
+        <button type={"button"} onClick={handleShowIncomplete}>
+          Show Incomplete
+        </button>
+      </div>
       <ul>
         {todos.map((todo) => (
           <li key={todo.id}>
