@@ -80,6 +80,19 @@ const App = () => {
     dispatchFilter({ type: "SHOW_INCOMPLETE" });
   };
 
+  const filteredTodos = todos.filter((todo) => {
+    if (filter === "ALL") {
+      return true;
+    }
+    if (filter === "COMPLETE" && todo.complete) {
+      return true;
+    }
+    if (filter === "INCOMPLETE" && !todo.complete) {
+      return true;
+    }
+    return false;
+  });
+
   return (
     <StyledApp className="App">
       <h1>To Do List</h1>
@@ -95,7 +108,7 @@ const App = () => {
         </button>
       </div>
       <ul>
-        {todos.map((todo) => (
+        {filteredTodos.map((todo) => (
           <li key={todo.id}>
             <label>
               <input
