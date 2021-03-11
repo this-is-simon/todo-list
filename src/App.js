@@ -47,11 +47,21 @@ const App = () => {
     setTask(event.target.value);
   };
 
+  const handleChangeCheckbox = (id) => {
+    const updatedTodos = todos.map((todo) => {
+      if (todo.id === id) {
+        return { ...todo, complete: !todo.complete };
+      } else {
+        return todo;
+      }
+    });
+    setTodos(updatedTodos);
+  };
+
   const handleSubmit = (event) => {
     if (task) {
-      setTodos(todos.concat({ id: uuid(), task, completed: false }));
+      setTodos(todos.concat({ id: uuid(), task, complete: false }));
     }
-
     setTask("");
     event.preventDefault();
   };
@@ -64,7 +74,14 @@ const App = () => {
       <ul>
         {todos.map((todo) => (
           <li key={todo.id}>
-            <label>{todo.task}</label>
+            <label>
+              <input
+                type={"checkbox"}
+                onChange={() => handleChangeCheckbox(todo.id)}
+                checked={todo.complete}
+              />
+              {todo.task}
+            </label>
           </li>
         ))}
       </ul>
