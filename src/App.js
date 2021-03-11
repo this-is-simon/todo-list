@@ -2,6 +2,7 @@ import "./App.css";
 import { useState } from "react";
 import styled from "styled-components";
 import { device } from "./constants/deviceSizes";
+import { v4 as uuid } from "uuid";
 
 const StyledApp = styled.div`
   display: flex;
@@ -22,27 +23,37 @@ const StyledButton = styled.button`
 
 const initialTodos = [
   {
-    id: "a",
+    id: uuid(),
     task: "Do dishes",
     complete: false,
   },
   {
-    id: "b",
+    id: uuid(),
     task: "Paint walls",
     complete: false,
   },
   {
-    id: "c",
+    id: uuid(),
     task: "Fix car",
     complete: false,
   },
 ];
 
 const App = () => {
-  const [task, updateTask] = useState();
+  const [task, setTask] = useState("");
+  const [todos, setTodos] = useState(initialTodos);
 
   const handleChangeInput = (event) => {
-    updateTask(event.target.value);
+    setTask(event.target.value);
+  };
+
+  const handleSubmit = (event) => {
+    if (task) {
+      setTodos(todos.concat({ id: uuid(), task, completed: false }));
+    }
+
+    setTask("");
+    event.preventDefault();
   };
 
   console.log("task?", task);
@@ -50,15 +61,17 @@ const App = () => {
   return (
     <StyledApp className="App">
       <h1>To Do List</h1>
-      <input onChange={handleChangeInput} />
-      <StyledButton type={"submit"}>Add To Do Item</StyledButton>
       <ul>
-        {initialTodos.map((todo) => (
+        {todos.map((todo) => (
           <li key={todo.id}>
             <label>{todo.task}</label>
           </li>
         ))}
       </ul>
+      <form onSubmit={handleSubmit}>
+        <input type={"text"} value={task} onChange={handleChangeInput} />
+        <StyledButton type={"submit"}>Add To Do Item</StyledButton>
+      </form>
     </StyledApp>
   );
 };
