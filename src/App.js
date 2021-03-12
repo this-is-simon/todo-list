@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { device } from "./constants/deviceSizes";
 import { v4 as uuid } from "uuid";
 import { filterReducer } from "./reducers/filterReducer";
+import { todoReducer } from "./reducers/todoReducer";
 
 const StyledApp = styled.div`
   display: flex;
@@ -42,27 +43,29 @@ const initialTodos = [
 
 const App = () => {
   const [task, setTask] = useState("");
-  const [todos, setTodos] = useState(initialTodos);
+  // const [todos, setTodos] = useState(initialTodos);
   const [filter, dispatchFilter] = useReducer(filterReducer, "ALL");
+  const [todos, dispatchTodos] = useReducer(todoReducer, initialTodos);
+
+  // const [state, dispatch] = useReducer(reducer, initialArg, init);
+  //useReducer takes a reducer as its first argument, of type (state,action)=>{newState}
+  // It takes the initial state as its second argument (or 'initialArg')
+  // It returns the current state paired with a dispatch method - in this case, 'filter' and 'dispatchFilter'
 
   const handleChangeInput = (event) => {
     setTask(event.target.value);
   };
 
-  const handleChangeCheckbox = (id) => {
-    const updatedTodos = todos.map((todo) => {
-      if (todo.id === id) {
-        return { ...todo, complete: !todo.complete };
-      } else {
-        return todo;
-      }
+  const handleChangeCheckbox = (todo) => {
+    dispatchTodos({
+      type: todo.complete ? "UNDO_TODO" : "DO_TODO",
+      id: todo.id,
     });
-    setTodos(updatedTodos);
   };
 
   const handleSubmit = (event) => {
     if (task) {
-      setTodos(todos.concat({ id: uuid(), task, complete: false }));
+      dispatchTodos({ type: "ADD_TODO", id: uuid(), task });
     }
     setTask("");
     event.preventDefault();
@@ -113,7 +116,7 @@ const App = () => {
             <label>
               <input
                 type={"checkbox"}
-                onChange={() => handleChangeCheckbox(todo.id)}
+                onChange={() => handleChangeCheckbox(todo)}
                 checked={todo.complete}
               />
               {todo.task}
